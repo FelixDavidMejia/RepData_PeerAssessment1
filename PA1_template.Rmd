@@ -89,7 +89,10 @@ The mean of steps taken per day is **`r format(avg_steps_day, big.mark = ",")`**
 The interval with most steps, in average, is the **`r most_steps_interval_idx`th** interval, which corresponds to the interval starting at **`r most_steps_interval_lbl`hrs**.
 
 ## Imputing missing values
+```{r reportmissingvalues}
 
+```
+There are some missi
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
