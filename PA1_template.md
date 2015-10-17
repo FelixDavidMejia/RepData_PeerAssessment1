@@ -1,14 +1,6 @@
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
+# Reproducible Research: Peer Assessment 1
 
-```{r setoptions, echo=FALSE}
-library(knitr)
-opts_chunk$set(echo = TRUE, fig.path='figures/', warning=FALSE, message=FALSE)
-```
+
 
 ## Introduction
 It is now possible to collect a large amount of data about personal
@@ -32,7 +24,8 @@ report will be answering questions based on the insight provided by this data.
 
 ## Loading and preprocessing the data  
 Data was loaded directly from a zipped CSV file:
-```{r loadingdata}
+
+```r
 # Setting right folder
 setwd("~/GitHub/RepData_PeerAssessment1")
 #Reading data
@@ -42,9 +35,12 @@ activity_data$date <- as.Date(activity_data$date,"%Y-%m-%d")
 ```
 
 
+
+
 ## What is mean total number of steps taken per day?
 
-```{r steps_per_day}
+
+```r
     library(dplyr)
     library(ggplot2)
     #Grouping intervals by date
@@ -58,17 +54,22 @@ activity_data$date <- as.Date(activity_data$date,"%Y-%m-%d")
             labs(x = "Day") +
             labs(y = "Steps per Day") +
             labs(title = expression(atop(bold("Total steps taken per Day"), atop(italic("For Subject XXX"), ""))))
-    
+```
+
+![](figures/steps_per_day-1.png) 
+
+```r
     # Calculate and report the mean and median total number of steps taken per day
         # Mean steps per day
             avg_steps_day <- mean(steps_per_day.df$steps_per_day)
         # Median steps per day
             median_steps_per_day <- median(steps_per_day.df$steps_per_day)
 ```
-The mean of steps taken per day is **`r format(avg_steps_day, big.mark = ",")`**, while the median of the steps taken per day was **`r format(median_steps_per_day, big.mark = ",")`** steps.
+The mean of steps taken per day is **9,354.23**, while the median of the steps taken per day was **10,395** steps.
 
 ## What is the average daily activity pattern?
-```{r dailyactivitypattern}
+
+```r
         #Grouping records by interval
         intervals.g <- group_by(activity_data, interval)
         # Summarizing steps by day
@@ -81,12 +82,16 @@ The mean of steps taken per day is **`r format(avg_steps_day, big.mark = ",")`**
             labs(x = "Interval of Day (5 mins)") +
             labs(y = "Average of steps taken per 5m interval") +
             labs(title = expression(atop(bold("Total steps taken per 5 min Interval of Day"), atop(italic("For Subject XXX"), ""))))
-        
+```
+
+![](figures/dailyactivitypattern-1.png) 
+
+```r
         # Interval with most steps
         most_steps_interval_idx <- which.max(steps_per_interval.df$steps_per_interval)
         most_steps_interval_lbl <- steps_per_interval.df$interval[most_steps_interval_idx]
 ```
-The interval with most steps, in average, is the **`r most_steps_interval_idx`th** interval, which corresponds to the interval starting at **`r most_steps_interval_lbl`hrs**.
+The interval with most steps, in average, is the **104th** interval, which corresponds to the interval starting at **835hrs**.
 
 ## Imputing missing values
 
