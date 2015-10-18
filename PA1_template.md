@@ -35,66 +35,139 @@ activity_data$date <- as.Date(activity_data$date,"%Y-%m-%d")
 ```
 
 
-
-
 ## What is mean total number of steps taken per day?
 
 
 ```r
-    library(dplyr)
-    library(ggplot2)
-    #Grouping intervals by date
-        dates.g <- group_by(activity_data, date)
-    # Summarizing steps by day
-        steps_per_day.df <- summarize(dates.g, steps_per_day = sum(steps, na.rm = TRUE))
-    # Creating Graph
-        ## Setup ggplot with data frame
-        g <- ggplot(steps_per_day.df, aes(x = date, y = steps_per_day))
-        g + geom_bar(alpha = 7/10, stat = "identity") +
-            labs(x = "Day") +
-            labs(y = "Steps per Day") +
-            labs(title = expression(atop(bold("Total steps taken per Day"), atop(italic("For Subject XXX"), ""))))
+library(dplyr)
+library(ggplot2)
+#Grouping intervals by date
+dates.g <- group_by(activity_data, date)
+# Summarizing steps by day
+steps_per_day.df <- summarize(dates.g, steps_per_day = sum(steps, na.rm = TRUE))
+# Creating Graph
+## Setup ggplot with data frame
+g <- ggplot(steps_per_day.df, aes(x = date, y = steps_per_day))
+g + geom_bar(alpha = 7/10, stat = "identity") +
+    labs(x = "Day") +
+    labs(y = "Steps per Day") +
+    labs(title = expression(atop(bold("Total steps taken per Day"), atop(italic("For Subject XXX"), ""))))
 ```
 
 ![](figures/steps_per_day-1.png) 
 
 ```r
-    # Calculate and report the mean and median total number of steps taken per day
-        # Mean steps per day
-            avg_steps_day <- mean(steps_per_day.df$steps_per_day)
-        # Median steps per day
-            median_steps_per_day <- median(steps_per_day.df$steps_per_day)
+# Calculate and report the mean and median total number of steps taken per day
+# Mean steps per day
+avg_steps_day <- mean(steps_per_day.df$steps_per_day)
+# Median steps per day
+median_steps_per_day <- median(steps_per_day.df$steps_per_day)
 ```
 The mean of steps taken per day is **9,354.23**, while the median of the steps taken per day was **10,395** steps.
 
 ## What is the average daily activity pattern?
 
 ```r
-        #Grouping records by interval
-        intervals.g <- group_by(activity_data, interval)
-        # Summarizing steps by day
-        steps_per_interval.df <- summarize(intervals.g, steps_per_interval = mean(steps, na.rm = TRUE))
-        
-        # Creating Graph
-        ## Setup ggplot with data frame
-        g <- ggplot(steps_per_interval.df, aes(x = interval, y = steps_per_interval))
-        g + geom_line(alpha = 7/10, color = "black", stat = "identity") +
-            labs(x = "Interval of Day (5 mins)") +
-            labs(y = "Average of steps taken per 5m interval") +
-            labs(title = expression(atop(bold("Total steps taken per 5 min Interval of Day"), atop(italic("For Subject XXX"), ""))))
+#Grouping records by interval
+intervals.g <- group_by(activity_data, interval)
+# Summarizing steps by day
+steps_per_interval.df <- summarize(intervals.g, steps_per_interval = mean(steps, na.rm = TRUE))
+
+# Creating Graph
+## Setup ggplot with data frame
+g <- ggplot(steps_per_interval.df, aes(x = interval, y = steps_per_interval))
+g + geom_line(alpha = 7/10, color = "black", stat = "identity") +
+    labs(x = "Interval of Day (5 mins)") +
+    labs(y = "Average of steps taken per 5m interval") +
+    labs(title = expression(atop(bold("Total steps taken per 5 min Interval of Day"), atop(italic("For Subject XXX"), ""))))
 ```
 
 ![](figures/dailyactivitypattern-1.png) 
 
 ```r
-        # Interval with most steps
-        most_steps_interval_idx <- which.max(steps_per_interval.df$steps_per_interval)
-        most_steps_interval_lbl <- steps_per_interval.df$interval[most_steps_interval_idx]
+# Interval with most steps
+most_steps_interval_idx <- which.max(steps_per_interval.df$steps_per_interval)
+most_steps_interval_lbl <- steps_per_interval.df$interval[most_steps_interval_idx]
 ```
-The interval with most steps, in average, is the **104th** interval, which corresponds to the interval starting at **835hrs**.
+The interval with most steps, in average, is the **104th** interval, which corresponds to the interval starting at **835hrs**. As can be appreciated in the previous graph, activity starts shortly before 6AM, and cycles through day, reducing to a minimum after 7PM. The activity peak occurs early in the day, between 8AM and 9AM.
 
 ## Imputing missing values
+There are some intervals with missing steps data. Observing the data, I may say that in some days, data has not been gathered at all.  
+
+```r
+# Calculating intervals with no data (NA)
+na_intervals <- sum(is.na(activity_data$steps))
+```
+Those intervals without step data are **2304**.  
+
+We will be imputing the missing step data with the average of the steps taken on the same interval for the days where data is available. Then we will be able to determine how this modifies the total of steps taken per day.  
 
 
+```r
+# Create a new dataset that is equal to the original dataset but with
+# the missing data filled in.
+
+# Making a copy of the original file
+activity_data.imp <- left_join(activity_data, steps_per_interval.df) #Copy of df to be populated with imputed values
+#activity_data.imp$steps2 <- activity_data.imp$steps
+activity_data.imp$steps[is.na(activity_data.imp$steps)] <- activity_data.imp$steps_per_interval
+activity_data.imp <- select(activity_data.imp, 1:3)
+
+# Make a histogram of the total number of steps taken each day and
+# Calculate and report the mean and median total number of steps
+# taken per day. Do these values differ from the estimates from the
+# first part of the assignment?
+
+#Grouping intervals by date
+dates.imp.g <- group_by(activity_data.imp, date)
+# Summarizing steps by day
+steps_per_day.imp.df <- summarize(dates.imp.g, steps_per_day = sum(steps, na.rm = TRUE))
+
+# Creating Graph
+## Setup ggplot with data frame
+g <- ggplot(steps_per_day.imp.df, aes(x = date, y = steps_per_day))
+g + geom_bar(alpha = 7/10, stat = "identity") +
+    labs(x = "Day") +
+    labs(y = "Steps per Day") +
+    labs(title = expression(atop(bold("Total steps taken per Day"), atop(italic("For Subject XXX (imputing NA values with interval average)"), ""))))
+```
+
+![](figures/imputemissingvalues-1.png) 
+
+```r
+# Calculate and report the mean and median total number of steps taken per day
+# Mean steps per day
+avg_steps_day.imp <- mean(steps_per_day.imp.df$steps_per_day)
+# Median steps per day
+median_steps_day.imp <- median(steps_per_day.imp.df$steps_per_day)
+```
+
+The mean of total steps taken per day after imputing is **10,766.19** and the median of the total steps per day is **10,766.19**. Compared to the previously obtained values (9,354.23 and 10,395 as mean and median values), the values obtained after imputing the missing values are somewhat larger.
+
+Let's explore the impact of imputing the missing values using the average of the available data, by looking at both histograms side by side.
+
+
+```r
+# What is the impact of imputing missing data on the estimates of
+# the total daily number of steps?
+
+# New table with day totals for steps, non imputed and imputed
+comparedata <- steps_per_day.df
+comparedata$imputed <- FALSE
+comparedata <- bind_rows(comparedata, steps_per_day.imp.df)
+comparedata$imputed[is.na(comparedata$imputed)] <- TRUE
+
+# Drawing Histogram
+g <- ggplot(comparedata, aes(x = date, y = steps_per_day))
+g + geom_bar(alpha = 7/10, stat = "identity") +
+    facet_grid(. ~ imputed) +
+    labs(x = "Date") +
+    labs(y = expression("Total Steps per Day")) +
+    labs(title = expression(atop(bold("Total Steps per Day"), atop(italic("Non-Imputed vs Imputed missing values"), ""))))
+```
+
+![](figures/compareimputed-1.png) 
+
+As we are imputing missing data with the average of existing data, daily averages won't go lower or higher, but the days that have no data at all, are pushed towards an "average day". That is why some gaps present in the left histogram (the one with no imputed data) are filled in the graph presented to the right (which, of course, includes the imputed average data).  
 
 ## Are there differences in activity patterns between weekdays and weekends?
