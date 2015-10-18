@@ -171,3 +171,34 @@ g + geom_bar(alpha = 7/10, stat = "identity") +
 As we are imputing missing data with the average of existing data, daily averages won't go lower or higher, but the days that have no data at all, are pushed towards an "average day". That is why some gaps present in the left histogram (the one with no imputed data) are filled in the graph presented to the right (which, of course, includes the imputed average data).  
 
 ## Are there differences in activity patterns between weekdays and weekends?
+
+We may answer this question by identifying each reacord with an indicator saying if its information regarding a weekday or a weekend day. By grouping the data of the interval averages, first by our weekday/weekend indicator and then by interval, then, we will be able to summarize by interval, providing the average of steps per 5 mins interval through a whole day, differentiating the weekdays from the weekends.  
+
+
+```r
+# Create a new factor variable in the dataset with two
+# levels – “weekday” and “weekend” indicating whether a given date is
+# a weekday or weekend day.
+
+# Weekdays will be flagged FALSE (0) and weekends will be TRUE (1)
+activity_data.imp$weekpart <- !is.element(weekdays(activity_data.imp$date), c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"))
+activity_data.imp$weekpart <- factor(activity_data.imp$weekpart, labels = c("weekdays", "weekend"))
+
+#Grouping by interval
+intervals.w.g <- group_by(activity_data.imp, weekpart, interval)
+# Summarizing steps by day
+steps_per_interval.w.df <- summarize(intervals.w.g, steps_per_interval = mean(steps, na.rm = TRUE))
+
+# Creating Graph
+## Setup ggplot with data frame
+g <- ggplot(steps_per_interval.w.df, aes(x = interval, y = steps_per_interval))
+g + geom_line(alpha = 7/10, color = "black", stat = "identity") +
+    facet_grid(weekpart ~ .) +
+    labs(x = "Interval of Day (5 mins)") +
+    labs(y = "Average of steps taken per 5m interval") +
+    labs(title = expression(atop(bold("Total steps taken per 5 min Interval of Day"), atop(italic("For Subject XXX by part of week"), ""))))
+```
+
+![](figures/weekday_weekend_difference-1.png) 
+
+The conclusion at which we may arrive is that the activity peak which was previously identified happening in the early morning, is less accentuated on weekends, while the contrary happens on the rest of the day activity, appearing the subject to be more active through the day on weekends. Other notable observations would be regarding the time at which the subject activity starts and ends, appearing to be earlier on weekdays than in weekends.

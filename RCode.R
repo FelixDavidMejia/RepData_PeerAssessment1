@@ -68,7 +68,8 @@ activity_data$date <- as.Date(activity_data$date,"%Y-%m-%d")
         # the missing data filled in.
         
         # Making a copy of the original file
-        activity_data.imp <- left_join(activity_data, steps_per_interval.df) #Copy of df to be populated with imputed values
+        # Copy of df to be populated with imputed values
+        activity_data.imp <- left_join(activity_data, steps_per_interval.df) 
         #activity_data.imp$steps2 <- activity_data.imp$steps
         activity_data.imp$steps[is.na(activity_data.imp$steps)] <- activity_data.imp$steps_per_interval
         activity_data.imp <- select(activity_data.imp, 1:3)
@@ -89,7 +90,8 @@ activity_data$date <- as.Date(activity_data$date,"%Y-%m-%d")
         g + geom_bar(alpha = 7/10, stat = "identity") +
             labs(x = "Day") +
             labs(y = "Steps per Day") +
-            labs(title = expression(atop(bold("Total steps taken per Day"), atop(italic("For Subject XXX (imputing NA values with interval average)"), ""))))
+            labs(title = expression(atop(bold("Total steps taken per Day"), +
+            atop(italic("For Subject XXX (imputing NA values with interval average)"), ""))))
         
         # Calculate and report the mean and median total number of steps taken per day
         # Mean steps per day
@@ -112,8 +114,37 @@ activity_data$date <- as.Date(activity_data$date,"%Y-%m-%d")
             facet_grid(. ~ imputed) +
             labs(x = "Date") +
             labs(y = expression("Total Steps per Day")) +
-            labs(title = expression(atop(bold("Total Steps per Day"), atop(italic("Non-Imputed vs Imputed missing values"), ""))))
+            labs(title = expression(atop(bold("Total Steps per Day"), +
+            atop(italic("Non-Imputed vs Imputed missing values"), ""))))
         
 ## Are there differences in activity patterns between weekdays and weekends?
 
+        # For this part the weekdays() function may be of some help here.
+        # Use the dataset with the filled-in missing values for this part.
+        
+        # Create a new factor variable in the dataset with two
+        # levels – “weekday” and “weekend” indicating whether a given date is
+        # a weekday or weekend day.
+        
+        # Weekdays will be flagged FALSE (0) and weekends will be TRUE (1)
+        activity_data.imp$weekpart <- !is.element(weekdays(activity_data.imp$date), c("Monday", "Tuesday", "Wednesday", "Thursday", "Friday"))
+        activity_data.imp$weekpart <- factor(activity_data.imp$weekpart, labels = c("weekdays", "weekend"))
+        
+        #Grouping by interval
+        intervals.w.g <- group_by(activity_data.imp, weekpart, interval)
+        # Summarizing steps by day
+        steps_per_interval.w.df <- summarize(intervals.w.g, steps_per_interval = mean(steps, na.rm = TRUE))
+        
+        # Creating Graph
+        ## Setup ggplot with data frame
+        g <- ggplot(steps_per_interval.w.df, aes(x = interval, y = steps_per_interval))
+        g + geom_line(alpha = 7/10, color = "black", stat = "identity") +
+            facet_grid(weekpart ~ .) +
+            labs(x = "Interval of Day (5 mins)") +
+            labs(y = "Average of steps taken per 5m interval") +
+            labs(title = expression(atop(bold("Total steps taken per 5 min Interval of Day"), atop(italic("For Subject XXX by part of week"), ""))))
+        
+
+        
+        
         
