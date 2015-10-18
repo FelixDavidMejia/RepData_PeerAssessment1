@@ -51,7 +51,25 @@ activity_data$date <- as.Date(activity_data$date,"%Y-%m-%d")
 
 
 ## Imputing missing values
-
+    
+        # Calculating intervals with no data (NA)
+        na_intervals <- sum(is.na(activity_data$steps))
+        
+        # Devise a strategy for filling in all of the missing values in the
+        # dataset. The strategy does not need to be sophisticated.
+        # For example, you could use the mean/median for that day, or the mean
+        # for that 5-minute interval, etc.
+        
+        # I will replace missing values in original data (steps which are NA)
+        # with the average step value computed with the existing data for that
+        # interval, already stored in steps_per_interval.df data frame.
+        
+        # Making a copy of the original file
+        activity_data.imp <- left_join(activity_data, steps_per_interval.df) #Copy of df to be populated with imputed values
+        #activity_data.imp$steps2 <- activity_data.imp$steps
+        activity_data.imp$steps[is.na(activity_data.imp$steps)] <- activity_data.imp$steps_per_interval
+        activity_data.imp <- select(activity_data.imp, 1:3)
+                
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
