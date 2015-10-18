@@ -54,7 +54,7 @@ g + geom_bar(alpha = 7/10, stat = "identity") +
     labs(title = expression(atop(bold("Total steps taken per Day"), atop(italic("For Subject XXX"), ""))))
 ```
 
-![](figures/steps_per_day-1.png) 
+<img src="figures/steps_per_day-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 ```r
 # Calculate and report the mean and median total number of steps taken per day
@@ -82,7 +82,7 @@ g + geom_line(alpha = 7/10, color = "black", stat = "identity") +
     labs(title = expression(atop(bold("Total steps taken per 5 min Interval of Day"), atop(italic("For Subject XXX"), ""))))
 ```
 
-![](figures/dailyactivitypattern-1.png) 
+<img src="figures/dailyactivitypattern-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 ```r
 # Interval with most steps
@@ -92,7 +92,7 @@ most_steps_interval_lbl <- steps_per_interval.df$interval[most_steps_interval_id
 The interval with most steps, in average, is the **104th** interval, which corresponds to the interval starting at **835hrs**. As can be appreciated in the previous graph, activity starts shortly before 6AM, and cycles through day, reducing to a minimum after 7PM. The activity peak occurs early in the day, between 8AM and 9AM.
 
 ## Imputing missing values
-There are some intervals with missing steps data. Observing the data, I may say that in some days, data has not been gathered at all.  
+There are some intervals with missing step data. Observing the data, I may say that in some days, data has not been gathered at all.  
 
 ```r
 # Calculating intervals with no data (NA)
@@ -132,7 +132,7 @@ g + geom_bar(alpha = 7/10, stat = "identity") +
     labs(title = expression(atop(bold("Total steps taken per Day"), atop(italic("For Subject XXX (imputing NA values with interval average)"), ""))))
 ```
 
-![](figures/imputemissingvalues-1.png) 
+<img src="figures/imputemissingvalues-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 ```r
 # Calculate and report the mean and median total number of steps taken per day
@@ -166,7 +166,7 @@ g + geom_bar(alpha = 7/10, stat = "identity") +
     labs(title = expression(atop(bold("Total Steps per Day"), atop(italic("Non-Imputed vs Imputed missing values"), ""))))
 ```
 
-![](figures/compareimputed-1.png) 
+<img src="figures/compareimputed-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 As we are imputing missing data with the average of existing data, daily averages won't go lower or higher, but the days that have no data at all, are pushed towards an "average day". That is why some gaps present in the left histogram (the one with no imputed data) are filled in the graph presented to the right (which, of course, includes the imputed average data).  
 
@@ -199,6 +199,6 @@ g + geom_line(alpha = 7/10, color = "black", stat = "identity") +
     labs(title = expression(atop(bold("Total steps taken per 5 min Interval of Day"), atop(italic("For Subject XXX by part of week"), ""))))
 ```
 
-![](figures/weekday_weekend_difference-1.png) 
+<img src="figures/weekday_weekend_difference-1.png" title="" alt="" style="display: block; margin: auto;" />
 
 The conclusion at which we may arrive is that the activity peak which was previously identified happening in the early morning, is less accentuated on weekends, while the contrary happens on the rest of the day activity, appearing the subject to be more active through the day on weekends. Other notable observations would be regarding the time at which the subject activity starts and ends, appearing to be earlier on weekdays than in weekends.

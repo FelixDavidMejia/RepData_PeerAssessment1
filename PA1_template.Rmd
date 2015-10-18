@@ -7,7 +7,7 @@ output:
 
 ```{r setoptions, echo=FALSE}
 library(knitr)
-opts_chunk$set(echo = TRUE, fig.path='figures/', warning=FALSE, message=FALSE)
+opts_chunk$set(echo = TRUE, fig.path='figures/', fig.align = "center", warning=FALSE, message=FALSE)
 ```
 
 ## Introduction
@@ -89,7 +89,7 @@ most_steps_interval_lbl <- steps_per_interval.df$interval[most_steps_interval_id
 The interval with most steps, in average, is the **`r most_steps_interval_idx`th** interval, which corresponds to the interval starting at **`r most_steps_interval_lbl`hrs**. As can be appreciated in the previous graph, activity starts shortly before 6AM, and cycles through day, reducing to a minimum after 7PM. The activity peak occurs early in the day, between 8AM and 9AM.
 
 ## Imputing missing values
-There are some intervals with missing steps data. Observing the data, I may say that in some days, data has not been gathered at all.  
+There are some intervals with missing step data. Observing the data, I may say that in some days, data has not been gathered at all.  
 ```{r reportmissingvalues, results="hide"}
 # Calculating intervals with no data (NA)
 na_intervals <- sum(is.na(activity_data$steps))
